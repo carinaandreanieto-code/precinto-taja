@@ -14,8 +14,8 @@ export default defineConfig(({mode}) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
         manifest: {
-          name: 'ESAQUI',
-          short_name: 'ESAQUI',
+          name: 'Precinto Taja',
+          short_name: 'P. Taja',
           description: 'Registro rápido de instalaciones para técnicos',
           theme_color: '#000000',
           background_color: '#ffffff',

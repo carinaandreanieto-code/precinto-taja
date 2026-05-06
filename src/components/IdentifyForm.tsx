@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { Button } from './ui/button.tsx';
-import { Input } from './ui/input.tsx';
-import { Textarea } from './ui/textarea.tsx';
-import { Label } from './ui/label.tsx';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card.tsx';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Label } from './ui/label';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card';
 import { ChevronLeft, Camera, MapPin, Save, Plus, Loader2, X } from 'lucide-react';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'sonner';
 import { Cliente, OperationType } from '../types';
 import { handleFirestoreError } from '../lib/error-handler';
@@ -128,7 +127,7 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
     return null;
   };
 
-  const compressImage = (file: File): Promise<Blob> => {
+  const compressImage = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error('Tiempo de espera agotado al comprimir imagen'));
@@ -139,8 +138,8 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 1024;
-          const MAX_HEIGHT = 1024;
+          const MAX_WIDTH = 800; // Un poco más pequeño para optimizar Firestore
+          const MAX_HEIGHT = 800;
           let width = img.width;
           let height = img.height;
 
@@ -161,15 +160,10 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
 
-          canvas.toBlob(
-            (blob) => {
-              clearTimeout(timeout);
-              if (blob) resolve(blob);
-              else reject(new Error('Error al generar Blob desde Canvas'));
-            },
-            'image/jpeg',
-            0.6
-          );
+          // Convertimos a Base64 con calidad media para ahorrar espacio en Firestore
+          const base64 = canvas.toDataURL('image/jpeg', 0.5);
+          clearTimeout(timeout);
+          resolve(base64);
         };
         img.onerror = () => {
           clearTimeout(timeout);
@@ -193,21 +187,18 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
       // Check if exists for merging
       const existing = await findExistingCliente(formData.numeroCliente, formData.numeroPrecinto);
       
-      // Upload compressed photos
-      const newPhotoUrls: string[] = [];
+      // Process photos as Base64 (Free storage in Firestore)
+      const newPhotoData: string[] = [];
       if (photos.length > 0) {
-        toast.loading(`Procesando y subiendo ${photos.length} fotos...`, { id: toastId });
+        toast.loading(`Procesando ${photos.length} fotos...`, { id: toastId });
         for (let i = 0; i < photos.length; i++) {
           const photo = photos[i];
           try {
-            const compressedBlob = await compressImage(photo);
-            const photoRef = ref(storage, `clientes/${Date.now()}_img_${i}.jpg`);
-            const uploadResult = await uploadBytes(photoRef, compressedBlob);
-            const url = await getDownloadURL(uploadResult.ref);
-            newPhotoUrls.push(url);
-            toast.loading(`Fotos: ${i + 1}/${photos.length} subidas...`, { id: toastId });
-          } catch (uploadError) {
-            console.error(`Error procesando foto ${i + 1}:`, uploadError);
+            const base64 = await compressImage(photo);
+            newPhotoData.push(base64);
+            toast.loading(`Fotos: ${i + 1}/${photos.length} procesadas...`, { id: toastId });
+          } catch (processError) {
+            console.error(`Error procesando foto ${i + 1}:`, processError);
             toast.error(`No se pudo procesar la foto ${i + 1}`, { id: toastId });
           }
         }
@@ -240,8 +231,8 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
         mergedData.latitud = formData.latitud ?? existing.data.latitud ?? null;
         mergedData.longitud = formData.longitud ?? existing.data.longitud ?? null;
 
-        // FOTOS
-        mergedData.fotos = [...(existing.data.fotos || []), ...newPhotoUrls];
+        // FOTOS (merged Base64/URLs)
+        mergedData.fotos = [...(existing.data.fotos || []), ...newPhotoData];
 
         await updateDoc(doc(db, 'clientes', existing.id), mergedData);
         toast.success('Registro actualizado correctamente', { id: toastId });
@@ -249,7 +240,7 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
         // NEW RECORD
         const clienteData = {
           ...formData,
-          fotos: newPhotoUrls,
+          fotos: newPhotoData,
           estado: 'Pendiente',
           fecha: serverTimestamp(),
         };

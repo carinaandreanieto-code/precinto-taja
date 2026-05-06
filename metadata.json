@@ -1,6 +1,6 @@
 {
-  "name": "ESAQUI",
-  "description": "App tipo PWA para técnicos en campo: registro rápido de instalaciones, geolocalización y gestión de clientes.",
+  "name": "Precinto Taja",
+  "description": "App tipo PWA para técnicos en campo: registro rápido de instalaciones para Precinto Taja.",
   "requestFramePermissions": ["camera", "geolocation"],
   "majorCapabilities": []
 }

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Button } from './ui/button.tsx';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card.tsx';
-import { Input } from './ui/input.tsx';
-import { Label } from './ui/label.tsx';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog.tsx';
+import { Button } from './ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Shield, Search, MapPin, Lock } from 'lucide-react';
 import { Screen } from '../types';
 import { toast } from 'sonner';
@@ -28,7 +28,7 @@ export function Home({ onNavigate }: HomeProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] space-y-12">
       <div className="text-center space-y-2">
-        <h1 className="text-6xl font-black tracking-tighter text-accent italic drop-shadow-lg">ESAQUI</h1>
+        <h1 className="text-6xl font-black tracking-tighter text-accent italic drop-shadow-lg text-center leading-none">PRECINTO<br/>TAJA</h1>
         <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">Técnicos en campo</p>
       </div>
 

@@ -1,9 +1,9 @@
-import { Button } from './ui/button.tsx';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card.tsx';
+import { Button } from './ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { ChevronLeft, MapPin, Phone, MessageSquare, Navigation, User, Calendar, Clock, BadgeCheck } from 'lucide-react';
 import { Cliente } from '../types';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
-import { Badge } from './ui/badge.tsx';
+import { Badge } from './ui/badge';
 
 interface ClientDetailProps {
   cliente: Cliente;
@@ -54,7 +54,7 @@ export function ClientDetail({ cliente, onBack }: ClientDetailProps) {
               <Map
                 defaultCenter={{ lat: cliente.latitud, lng: cliente.longitud }}
                 defaultZoom={15}
-                mapId="ESAQUI_DETAIL_MAP"
+                mapId="PRECINTO_TAJA_DETAIL_MAP"
                 internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
                 gestureHandling={'greedy'}
                 disableDefaultUI={true}
