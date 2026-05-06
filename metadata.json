@@ -1,0 +1,6 @@
+{
+  "name": "ESAQUI",
+  "description": "App tipo PWA para técnicos en campo: registro rápido de instalaciones, geolocalización y gestión de clientes.",
+  "requestFramePermissions": ["camera", "geolocation"],
+  "majorCapabilities": []
+}

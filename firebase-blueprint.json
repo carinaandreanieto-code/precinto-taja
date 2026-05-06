@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "cliente": {
+      "title": "Cliente",
+      "description": "Datos de una instalación de cliente registrada por un técnico",
+      "type": "object",
+      "properties": {
+        "numeroCliente": { "type": "string" },
+        "numeroPrecinto": { "type": "string" },
+        "latitud": { "type": "number" },
+        "longitud": { "type": "number" },
+        "direccion": { "type": "string" },
+        "telefono": { "type": "string" },
+        "observacion": { "type": "string" },
+        "fotos": { "type": "array", "items": { "type": "string" } },
+        "estado": { "type": "string", "enum": ["Pendiente", "Revisar", "Resuelto"] },
+        "fecha": { "type": "string", "format": "date-time" },
+        "zona": { "type": "string" }
+      },
+      "required": ["numeroPrecinto", "fecha", "estado"]
+    }
+  },
+  "firestore": {
+    "/clientes": {
+      "schema": "cliente",
+      "description": "Colección de registros de instalaciones"
+    }
+  }
+}

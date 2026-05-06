@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Helper for Cliente entity
+    function isValidCliente(data) {
+      let requiredFields = data.keys().hasAll(['fecha', 'estado']);
+      let typesValid = data.estado in ['Pendiente', 'Revisar', 'Resuelto'];
+      
+      let optionalFields = (!('numeroPrecinto' in data) || data.numeroPrecinto == null || (data.numeroPrecinto is string && data.numeroPrecinto.size() <= 100))
+        && (!('numeroCliente' in data) || data.numeroCliente == null || (data.numeroCliente is string && data.numeroCliente.size() <= 100))
+        && (!('direccion' in data) || data.direccion == null || (data.direccion is string && data.direccion.size() <= 500))
+        && (!('telefono' in data) || data.telefono == null || (data.telefono is string && data.telefono.size() <= 100))
+        && (!('observacion' in data) || data.observacion == null || (data.observacion is string && data.observacion.size() <= 3000))
+        && (!('fotos' in data) || data.fotos == null || data.fotos is list)
+        && (!('latitud' in data) || data.latitud == null || data.latitud is number)
+        && (!('longitud' in data) || data.longitud == null || data.longitud is number)
+        && (!('updatedAt' in data) || data.updatedAt == null || data.updatedAt is timestamp || data.updatedAt is string);
+
+      return requiredFields && typesValid && optionalFields;
+    }
+
+    match /clientes/{clienteId} {
+      allow read, write: if true;
+    }
+  }
+}

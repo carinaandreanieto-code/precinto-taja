@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-hover: #334155;
+  --color-accent: #f59e0b;
+  --color-accent-dark: #b45309;
+  --color-border: #334155;
+  --color-input: #334155;
+  
+  --font-sans: "Helvetica Neue", Arial, sans-serif;
+  
+  /* Additional variables needed for shadcn components but using my colors */
+  --color-primary: #f59e0b;
+  --color-primary-foreground: #0f172a;
+  --color-secondary: #334155;
+  --color-secondary-foreground: #f8fafc;
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+  --color-popover: #1e293b;
+  --color-popover-foreground: #f8fafc;
+  --color-card: #1e293b;
+  --color-card-foreground: #f8fafc;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+  --color-ring: #f59e0b;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-slate-50 antialiased;
+  }
+}
+
+@layer components {
+  .btn-sleek-primary {
+    @apply bg-accent text-slate-900 font-extrabold uppercase tracking-wider rounded-xl shadow-[0_4px_0_var(--color-accent-dark)] active:shadow-none active:translate-y-1 transition-all;
+  }
+  
+  .btn-sleek-secondary {
+    @apply bg-surface text-slate-50 font-semibold border-2 border-slate-700 rounded-xl hover:border-accent transition-all;
+  }
+
+  .input-sleek {
+    @apply bg-input border-2 border-slate-700 rounded-xl text-white focus:border-accent focus:outline-none transition-all;
+  }
+}
