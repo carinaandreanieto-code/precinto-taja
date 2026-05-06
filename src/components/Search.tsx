@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from './ui/button.tsx';
+import { Input } from './ui/input.tsx';
+import { Card, CardContent } from './ui/card.tsx';
 import { ChevronLeft, Search as SearchIcon, MapPin, Hash, ArrowRight, Loader2, X } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, orderBy, limit, startAt, endAt } from 'firebase/firestore';

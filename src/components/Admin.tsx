@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Button } from './ui/button.tsx';
+import { Input } from './ui/input.tsx';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card.tsx';
+import { Badge } from './ui/badge.tsx';
 import { 
   ChevronLeft, 
   Filter, 
@@ -22,10 +22,10 @@ import { db } from '../lib/firebase';
 import { collection, query, getDocs, orderBy, deleteDoc, doc, updateDoc, where } from 'firebase/firestore';
 import { Cliente, OperationType, ClienteEstado } from '../types';
 import { handleFirestoreError } from '../lib/error-handler';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select.tsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog.tsx';
+import { Label } from './ui/label.tsx';
+import { Textarea } from './ui/textarea.tsx';
 import { toast } from 'sonner';
 
 interface AdminProps {
