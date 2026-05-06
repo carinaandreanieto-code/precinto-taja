@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent } from './ui/card';
-import { ChevronLeft, Search as SearchIcon, MapPin, Phone, Hash, ArrowRight, Loader2, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { ChevronLeft, Search as SearchIcon, MapPin, Hash, ArrowRight, Loader2, X } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, orderBy, limit, startAt, endAt } from 'firebase/firestore';
 import { Cliente, OperationType } from '../types';

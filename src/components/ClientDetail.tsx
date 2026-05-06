@@ -1,9 +1,9 @@
-import { Button } from './ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ChevronLeft, MapPin, Phone, MessageSquare, Navigation, User, Calendar, Clock, BadgeCheck } from 'lucide-react';
 import { Cliente } from '../types';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
-import { Badge } from './ui/badge';
+import { Badge } from '@/components/ui/badge';
 
 interface ClientDetailProps {
   cliente: Cliente;
