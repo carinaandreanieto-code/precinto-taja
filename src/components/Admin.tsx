@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import Papa from 'papaparse';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
@@ -10,6 +11,7 @@ import {
   Edit2, 
   Trash2, 
   Download, 
+  Plus,
   Eye, 
   Map as MapIcon,
   X,
@@ -19,7 +21,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { db } from '../lib/firebase';
-import { collection, query, getDocs, orderBy, deleteDoc, doc, updateDoc, where } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy, deleteDoc, doc, updateDoc, where, addDoc, serverTimestamp, writeBatch } from 'firebase/firestore';
 import { Cliente, OperationType, ClienteEstado } from '../types';
 import { handleFirestoreError } from '../lib/error-handler';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
@@ -51,6 +53,102 @@ export function Admin({ onBack }: AdminProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleExportCSV = () => {
+    const csv = Papa.unparse(clientes.map(c => ({
+      'NUMERO CLIENTE': c.numeroCliente,
+      'PRECINTO': c.numeroPrecinto,
+      'CLIENTE': c.numeroCliente, 
+      'TELEFONO': c.telefono,
+      'DIRECCION': c.direccion,
+      'LATITUD': c.latitud,
+      'LONGITUD': c.longitud,
+      'OBSERVACIONES': c.observacion,
+      'ESTADO': c.estado
+    })));
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'clientes.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleMarcarTodosResuelto = async () => {
+    try {
+      toast.loading('Actualizando estados...');
+      const pendientes = clientes.filter(c => c.estado !== 'Resuelto');
+      
+      if (pendientes.length === 0) {
+        toast.info('Todos los registros ya están en estado Resuelto');
+        return;
+      }
+
+      // Chunk into batches of 500
+      for (let i = 0; i < pendientes.length; i += 500) {
+        const batch = writeBatch(db);
+        const chunk = pendientes.slice(i, i + 500);
+        
+        chunk.forEach(cliente => {
+          const docRef = doc(db, 'clientes', cliente.id!);
+          batch.update(docRef, { estado: 'Resuelto' });
+        });
+        
+        await batch.commit();
+      }
+
+      toast.success(`Se actualizaron ${pendientes.length} registros a Resuelto`);
+      fetchClientes();
+    } catch (e) {
+      console.error(e);
+      toast.error('Error al actualizar estados');
+    }
+  };
+
+  const handleImportCSV = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        const data = results.data as any[];
+        toast.loading(`Importando ${data.length} registros...`);
+        
+        try {
+          const clientesCol = collection(db, 'clientes');
+          for (const row of data) {
+            const newCliente: any = {
+              numeroCliente: row['NUMERO CLIENTE'] || '',
+              numeroPrecinto: row['precinto'] || '',
+              telefono: row['TELEFONO'] || '',
+              direccion: `${row['CALLE'] || ''} ${row['ALTURA'] || ''}`.trim(),
+              observacion: row['UBICACION'] || '',
+              latitud: parseFloat(row['LAT_MZN'] || 0),
+              longitud: parseFloat(row['LONG_MZN'] || 0),
+              estado: 'Pendiente',
+              fecha: serverTimestamp(),
+              fotos: [] 
+            };
+
+            await addDoc(clientesCol, newCliente);
+          }
+          toast.success('Registros importados con éxito');
+          fetchClientes();
+        } catch (e) {
+          console.error(e);
+          toast.error('Error durante la importación');
+        }
+      },
+      error: (error) => {
+        console.error(error);
+        toast.error('Error al parsear el archivo CSV');
+      }
+    });
   };
 
   useEffect(() => {
@@ -122,8 +220,20 @@ export function Admin({ onBack }: AdminProps) {
           <Button variant="outline" size="sm" className="btn-sleek-secondary border-none" onClick={fetchClientes}>
             ACTUALIZAR
           </Button>
-          <Button size="sm" className="btn-sleek-primary px-6">
-            <Download className="w-4 h-4 mr-2" /> EXPORTAR
+          <Button size="sm" className="btn-sleek-primary px-6" onClick={handleExportCSV}>
+            <Download className="w-4 h-4 mr-2" /> EXPORTAR CSV
+          </Button>
+          <Button size="sm" variant="outline" className="bg-green-950/20 text-green-500 border-green-500/20" onClick={handleMarcarTodosResuelto}>
+            <CheckCircle2 className="w-4 h-4 mr-2" /> MARCAR TODOS RESUELTO
+          </Button>
+          <Button size="sm" variant="secondary" className="px-6 relative">
+            <input 
+              type="file" 
+              accept=".csv" 
+              className="absolute inset-0 opacity-0 cursor-pointer"
+              onChange={handleImportCSV}
+            />
+            <Plus className="w-4 h-4 mr-2" /> IMPORTAR CSV
           </Button>
         </div>
       </div>
