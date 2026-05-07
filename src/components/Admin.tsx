@@ -117,13 +117,27 @@ export function Admin({ onBack }: AdminProps) {
       skipEmptyLines: true,
       complete: async (results) => {
         const data = results.data as any[];
-        toast.loading(`Importando ${data.length} registros...`);
+        toast.loading(`Importando/Actualizando ${data.length} registros...`);
         
         try {
-          const clientesCol = collection(db, 'clientes');
+          // Fetch existing clients to map numeroCliente to ID
+          const snap = await getDocs(collection(db, 'clientes'));
+          const existingClientes = new Map<string, string>();
+          snap.docs.forEach(doc => {
+            const data = doc.data();
+            if (data.numeroCliente) {
+              existingClientes.set(data.numeroCliente, doc.id);
+            }
+          });
+
+          let clientsBatch = writeBatch(db);
+          let operationCount = 0;
+
           for (const row of data) {
+            const numeroCliente = row['NUMERO CLIENTE'] || '';
             const newCliente: any = {
-              numeroCliente: row['NUMERO CLIENTE'] || '',
+              nombre: row['NOMBRE CLIENTE'] || '', // Assuming new CSV column name
+              numeroCliente: numeroCliente,
               numeroPrecinto: row['precinto'] || '',
               telefono: row['TELEFONO'] || '',
               direccion: `${row['CALLE'] || ''} ${row['ALTURA'] || ''}`.trim(),
@@ -131,13 +145,29 @@ export function Admin({ onBack }: AdminProps) {
               latitud: parseFloat(row['LAT_MZN'] || 0),
               longitud: parseFloat(row['LONG_MZN'] || 0),
               estado: 'Pendiente',
-              fecha: serverTimestamp(),
-              fotos: [] 
             };
 
-            await addDoc(clientesCol, newCliente);
+            if (existingClientes.has(numeroCliente)) {
+              // Update existing
+              const docRef = doc(db, 'clientes', existingClientes.get(numeroCliente)!);
+              clientsBatch.update(docRef, newCliente);
+            } else {
+              // Create new
+              newCliente.fecha = serverTimestamp();
+              newCliente.fotos = [];
+              const newDocRef = doc(collection(db, 'clientes'));
+              clientsBatch.set(newDocRef, newCliente);
+            }
+
+            operationCount++;
+            if (operationCount >= 500) {
+              await clientsBatch.commit();
+              clientsBatch = writeBatch(db); // Create a new batch
+              operationCount = 0;
+            }
           }
-          toast.success('Registros importados con éxito');
+          await clientsBatch.commit();
+          toast.success('Registros importados/actualizados con éxito');
           fetchClientes();
         } catch (e) {
           console.error(e);

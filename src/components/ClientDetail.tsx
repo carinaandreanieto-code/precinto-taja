@@ -57,6 +57,7 @@ export function ClientDetail({ cliente, onBack }: ClientDetailProps) {
           <ChevronLeft className="w-4 h-4 mr-1" /> VOLVER
         </Button>
         <div className="flex flex-col ml-2">
+          <h1 className="text-xl font-black italic tracking-tight text-white uppercase">{cliente.nombre}</h1>
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">Número de Precinto</span>
           <div className="bg-indigo-600 text-white px-4 py-1 rounded-full inline-block mt-1">
             <h1 className="text-2xl font-black tracking-tight uppercase">{cliente.numeroPrecinto}</h1>
@@ -73,7 +74,7 @@ export function ClientDetail({ cliente, onBack }: ClientDetailProps) {
               zoom={15} 
               scrollWheelZoom={false}
               style={{ height: '100%', width: '100%' }}
-              zoomControl={false}
+              zoomControl={true}
             >
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

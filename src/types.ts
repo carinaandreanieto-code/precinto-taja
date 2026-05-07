@@ -2,6 +2,7 @@ export type ClienteEstado = 'Pendiente' | 'Revisar' | 'Resuelto';
 
 export interface Cliente {
   id?: string;
+  nombre: string;
   numeroCliente: string;
   numeroPrecinto: string;
   latitud: number;

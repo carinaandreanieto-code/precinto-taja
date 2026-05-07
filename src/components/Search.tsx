@@ -121,12 +121,15 @@ export function Search({ onBack }: SearchProps) {
                   <CardContent className="p-6 flex items-center justify-between">
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-black bg-accent text-slate-950 px-2 py-0.5 rounded-md uppercase tracking-wider">PRECINTO</span>
-                        <h3 className="font-black text-3xl text-white tracking-tighter group-hover:text-accent transition-colors leading-none">{cliente.numeroPrecinto}</h3>
+                        <span className="text-[10px] font-black bg-accent text-slate-950 px-2 py-0.5 rounded-md uppercase tracking-wider">CLIENTE</span>
+                        <div className="flex flex-col">
+                          <h3 className="font-black text-2xl text-yellow-50">{cliente.nombre}</h3>
+                          <h3 className="font-black text-4xl text-yellow-50 tracking-tighter group-hover:text-accent transition-colors leading-none">{cliente.numeroCliente}</h3>
+                        </div>
                       </div>
-                      <div className="flex flex-col text-base text-white font-bold tracking-tight space-y-1">
-                        <span className="flex items-center gap-2 underline decoration-accent/30 decoration-2 underline-offset-4"><Hash className="w-5 h-5 text-accent" /> CLIENTE: {cliente.numeroCliente}</span>
-                        <span className="flex items-center gap-2 line-clamp-1"><MapPin className="w-5 h-5 text-neutral-200" /> {cliente.direccion || 'Ubicación sin especificar'}</span>
+                      <div className="flex flex-col text-base text-yellow-100 font-bold tracking-tight space-y-1">
+                        <span className="flex items-center gap-2 underline decoration-accent/30 decoration-2 underline-offset-4"><Hash className="w-5 h-5 text-accent" /> PRECINTO: {cliente.numeroPrecinto}</span>
+                        <span className="flex items-center gap-2 line-clamp-1"><MapPin className="w-5 h-5 text-yellow-200" /> {cliente.direccion || 'Ubicación sin especificar'}</span>
                       </div>
                     </div>
                     <div className="w-14 h-14 bg-neutral-800 rounded-2xl flex items-center justify-center group-hover:bg-accent group-hover:text-neutral-950 transition-all shadow-lg border border-neutral-700 group-hover:border-accent">
