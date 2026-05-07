@@ -26,6 +26,7 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
+    nombre: '',
     numeroCliente: '',
     numeroPrecinto: '',
     direccion: '',
@@ -209,6 +210,7 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
       if (existing) {
         // MERGE LOGIC
         const mergedData: any = {
+          nombre: formData.nombre || existing.data.nombre,
           numeroPrecinto: formData.numeroPrecinto || existing.data.numeroPrecinto,
           numeroCliente: formData.numeroCliente || existing.data.numeroCliente,
           direccion: formData.direccion || existing.data.direccion,
@@ -285,17 +287,34 @@ export function IdentifyForm({ onBack }: IdentifyFormProps) {
       <Card className="bg-surface border-border shadow-2xl rounded-[2rem] overflow-hidden">
         <CardContent className="p-8 space-y-8">
           <div className="grid grid-cols-1 gap-8">
+            <div className="space-y-2">
+              <Label className="text-[16px] font-bold uppercase tracking-[0.2em] text-slate-500">Nombre del Cliente</Label>
+              <Input
+                className="input-sleek h-14 text-[26px] font-bold"
+                placeholder="Nombre completo"
+                value={formData.nombre}
+                onChange={e => setFormData({ ...formData, nombre: e.target.value })}
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Número de Cliente</Label>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  className="input-sleek h-14 text-xl font-bold"
-                  placeholder="Ej: 885210"
-                  value={formData.numeroCliente}
-                  onChange={e => setFormData({ ...formData, numeroCliente: e.target.value })}
-                />
+                <Label className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-500">Número de Cliente</Label>
+                <motion.div
+                  animate={{ 
+                    boxShadow: ["0 0 0px rgba(250,204,21,0)", "0 0 20px rgba(250,204,21,0.3)", "0 0 0px rgba(250,204,21,0)"]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="rounded-xl overflow-hidden"
+                >
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    className="input-sleek h-16 text-3xl font-black border-yellow-500/50 focus:border-yellow-400 focus:ring-yellow-400/20"
+                    placeholder="Ej: 885210"
+                    value={formData.numeroCliente}
+                    onChange={e => setFormData({ ...formData, numeroCliente: e.target.value })}
+                  />
+                </motion.div>
               </div>
 
               <div className="space-y-2">
