@@ -2,35 +2,35 @@
 @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
 
 @theme {
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-surface-hover: #334155;
-  --color-accent: #f59e0b;
-  --color-accent-dark: #b45309;
-  --color-border: #334155;
-  --color-input: #334155;
+  --color-background: #0a0a0a; /* neutral-950 */
+  --color-surface: #171717; /* neutral-900 */
+  --color-surface-hover: #262626; /* neutral-800 */
+  --color-accent: #facc15; /* yellow-400 */
+  --color-accent-dark: #a16207; /* yellow-700 */
+  --color-border: #404040; /* neutral-700 */
+  --color-input: #171717; /* neutral-900 */
   
   --font-sans: "Helvetica Neue", Arial, sans-serif;
   
   /* Additional variables needed for shadcn components but using my colors */
-  --color-primary: #f59e0b;
-  --color-primary-foreground: #0f172a;
-  --color-secondary: #334155;
-  --color-secondary-foreground: #f8fafc;
-  --color-muted: #1e293b;
-  --color-muted-foreground: #94a3b8;
-  --color-popover: #1e293b;
-  --color-popover-foreground: #f8fafc;
-  --color-card: #1e293b;
-  --color-card-foreground: #f8fafc;
-  --color-destructive: #ef4444;
-  --color-destructive-foreground: #f8fafc;
-  --color-ring: #f59e0b;
+  --color-primary: #facc15;
+  --color-primary-foreground: #000000;
+  --color-secondary: #262626;
+  --color-secondary-foreground: #fefce8; /* yellow-50 */
+  --color-muted: #171717;
+  --color-muted-foreground: #a3a3a3; /* neutral-400 */
+  --color-popover: #171717;
+  --color-popover-foreground: #fefce8;
+  --color-card: #171717;
+  --color-card-foreground: #fefce8;
+  --color-destructive: #991b1b; /* red-800 */
+  --color-destructive-foreground: #fef2f2;
+  --color-ring: #facc15;
 }
 
 @layer base {
   body {
-    @apply bg-background text-slate-50 antialiased;
+    @apply bg-background text-yellow-50 antialiased;
   }
 }
 

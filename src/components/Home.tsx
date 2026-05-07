@@ -49,6 +49,14 @@ export function Home({ onNavigate }: HomeProps) {
           BUSCAR
         </Button>
 
+        <Button
+          onClick={() => onNavigate('tasks-plus')}
+          className="btn-sleek-secondary h-36 text-3xl flex flex-col gap-2 hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <Search className="w-10 h-10" />
+          TAREAS PLUS
+        </Button>
+
         <div className="pt-8 flex flex-col items-center space-y-4">
           <Button
             onClick={() => setIsAdminDialogOpen(true)}

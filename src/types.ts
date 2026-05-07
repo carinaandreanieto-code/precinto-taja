@@ -15,7 +15,7 @@ export interface Cliente {
   zona?: string;
 }
 
-export type Screen = 'home' | 'identify' | 'search' | 'admin';
+export type Screen = 'home' | 'identify' | 'search' | 'admin' | 'tasks-plus';
 
 export enum OperationType {
   CREATE = 'create',
@@ -41,4 +41,16 @@ export interface FirestoreErrorInfo {
       email?: string | null;
     }[];
   }
+}
+
+export interface Task {
+  id: string;
+  item: string;
+  comment: string;
+  photo: string | null;
+  coords: string | null;
+  finished: boolean;
+  finalComment?: string;
+  createdAt: string;
+  finalizedAt?: string;
 }
