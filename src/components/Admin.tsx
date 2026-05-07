@@ -134,29 +134,53 @@ export function Admin({ onBack }: AdminProps) {
           let operationCount = 0;
 
           for (const row of data) {
-            const numeroCliente = row['NUMERO CLIENTE'] || '';
-            const newCliente: any = {
-              nombre: row['NOMBRE CLIENTE'] || '', // Assuming new CSV column name
+            const numeroCliente = (row['NUMERO CLIENTE'] || '').toString().trim();
+            if (!numeroCliente) continue;
+
+            // Busca el nombre en diferentes posibles encabezados
+            const nombreKeys = ['NOMBRE CLIENTE', 'NOMBRE', 'CLIENTE', 'TITULAR', 'APELLIDO Y NOMBRE', 'APELLIDO_Y_NOMBRE', 'USER'];
+            let nombreCSV = '';
+            for (const key of nombreKeys) {
+              if (row[key]) {
+                nombreCSV = row[key].toString().trim();
+                break;
+              }
+            }
+
+            const newClienteData: any = {
               numeroCliente: numeroCliente,
-              numeroPrecinto: row['precinto'] || '',
-              telefono: row['TELEFONO'] || '',
+              numeroPrecinto: (row['precinto'] || row['PRECINTO'] || '').toString().trim(),
+              telefono: (row['TELEFONO'] || row['TEL'] || '').toString().trim(),
               direccion: `${row['CALLE'] || ''} ${row['ALTURA'] || ''}`.trim(),
-              observacion: row['UBICACION'] || '',
-              latitud: parseFloat(row['LAT_MZN'] || 0),
-              longitud: parseFloat(row['LONG_MZN'] || 0),
+              observacion: (row['UBICACION'] || row['OBSERVACIONES'] || '').toString().trim(),
+              latitud: parseFloat(row['LAT_MZN'] || row['LATITUD'] || 0),
+              longitud: parseFloat(row['LONG_MZN'] || row['LONGITUD'] || 0),
               estado: 'Pendiente',
             };
 
+            // Solo incluimos el nombre si encontramos uno en el CSV
+            if (nombreCSV) {
+              newClienteData.nombre = nombreCSV;
+            }
+
             if (existingClientes.has(numeroCliente)) {
-              // Update existing
-              const docRef = doc(db, 'clientes', existingClientes.get(numeroCliente)!);
-              clientsBatch.update(docRef, newCliente);
+              // Actualizar existente
+              const docId = existingClientes.get(numeroCliente)!;
+              const docRef = doc(db, 'clientes', docId);
+              
+              // Si el nombre ya existe en la DB y el CSV viene vacío para este registro, 
+              // no lo sobrescribimos (esto se maneja con el IF de arriba, 
+              // pero para mayor seguridad, durante el update solo pasamos los campos definidos)
+              clientsBatch.update(docRef, newClienteData);
             } else {
-              // Create new
-              newCliente.fecha = serverTimestamp();
-              newCliente.fotos = [];
+              // Crear nuevo
+              newClienteData.fecha = serverTimestamp();
+              newClienteData.fotos = [];
+              // Si no hay nombre en el CSV, ponemos un valor por defecto o vacío
+              if (!newClienteData.nombre) newClienteData.nombre = 'Sin Nombre';
+              
               const newDocRef = doc(collection(db, 'clientes'));
-              clientsBatch.set(newDocRef, newCliente);
+              clientsBatch.set(newDocRef, newClienteData);
             }
 
             operationCount++;
@@ -314,7 +338,8 @@ export function Admin({ onBack }: AdminProps) {
               <Table>
                 <TableHeader className="bg-slate-900/50">
                   <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Canal / Precinto</TableHead>
+                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Nombre</TableHead>
+                    <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Precinto</TableHead>
                     <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Cliente</TableHead>
                     <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Fecha Carga</TableHead>
                     <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Estado</TableHead>
@@ -324,6 +349,7 @@ export function Admin({ onBack }: AdminProps) {
                 <TableBody>
                   {filteredClientes.map((cliente) => (
                     <TableRow key={cliente.id} className="border-border hover:bg-slate-800/50 transition-colors">
+                      <TableCell className="font-bold text-white uppercase text-xs">{cliente.nombre || 'Sin Nombre'}</TableCell>
                       <TableCell className="font-black text-accent">{cliente.numeroPrecinto}</TableCell>
                       <TableCell className="font-bold text-slate-300">{cliente.numeroCliente || '--'}</TableCell>
                       <TableCell className="text-slate-500 text-[10px] font-bold">
@@ -377,6 +403,14 @@ export function Admin({ onBack }: AdminProps) {
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-6 py-6 border-t border-border mt-4">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Nombre del Cliente</Label>
+              <Input 
+                value={editingCliente?.nombre} 
+                onChange={(e) => setEditingCliente(prev => prev ? { ...prev, nombre: e.target.value } : null)}
+                className="input-sleek font-bold text-white h-12"
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Precinto</Label>
