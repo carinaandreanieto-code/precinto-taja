@@ -123,8 +123,8 @@ export function Search({ onBack }: SearchProps) {
                       <div className="flex items-center gap-3">
                         <span className="text-[10px] font-black bg-accent text-slate-950 px-2 py-0.5 rounded-md uppercase tracking-wider">CLIENTE</span>
                         <div className="flex flex-col">
-                          <h3 className="font-black text-2xl text-yellow-50">{cliente.nombre}</h3>
-                          <h3 className="font-black text-4xl text-yellow-50 tracking-tighter group-hover:text-accent transition-colors leading-none">{cliente.numeroCliente}</h3>
+                          <h3 className="font-black text-4xl text-yellow-50 tracking-tighter group-hover:text-accent transition-colors leading-tight mb-1 uppercase">{cliente.nombre}</h3>
+                          <h3 className="font-black text-lg text-yellow-50/60 uppercase racking-widest leading-none">CLIENTE: {cliente.numeroCliente}</h3>
                         </div>
                       </div>
                       <div className="flex flex-col text-base text-yellow-100 font-bold tracking-tight space-y-1">

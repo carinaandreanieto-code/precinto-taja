@@ -57,7 +57,7 @@ export function ClientDetail({ cliente, onBack }: ClientDetailProps) {
           <ChevronLeft className="w-4 h-4 mr-1" /> VOLVER
         </Button>
         <div className="flex flex-col ml-2">
-          <h1 className="text-xl font-black italic tracking-tight text-white uppercase">{cliente.nombre}</h1>
+          <h1 className="text-3xl font-black italic tracking-tighter text-white uppercase mb-2 leading-none">{cliente.nombre}</h1>
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">Número de Precinto</span>
           <div className="bg-indigo-600 text-white px-4 py-1 rounded-full inline-block mt-1">
             <h1 className="text-2xl font-black tracking-tight uppercase">{cliente.numeroPrecinto}</h1>
@@ -67,7 +67,7 @@ export function ClientDetail({ cliente, onBack }: ClientDetailProps) {
 
       <div className="space-y-6">
         {/* Map Section */}
-        <div className="h-64 rounded-3xl overflow-hidden border-2 border-neutral-200 shadow-inner relative bg-indigo-50 z-0">
+        <div className="h-[450px] rounded-3xl overflow-hidden border-2 border-neutral-200 shadow-inner relative bg-indigo-50 z-0">
           {cliente.latitud && cliente.longitud ? (
             <MapContainer 
               center={[cliente.latitud, cliente.longitud]} 
